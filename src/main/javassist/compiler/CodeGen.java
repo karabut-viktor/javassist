@@ -326,7 +326,6 @@ public abstract class CodeGen extends Visitor implements Opcode, TokenId {
             return;     // empty
 
         if (st.getOperator() == Stmnt.EXPR || st.getOperator() == Stmnt.DECL) {
-            System.out.println("Increment line at " + st);
             bytecode.atLineNumber();
         }
 
