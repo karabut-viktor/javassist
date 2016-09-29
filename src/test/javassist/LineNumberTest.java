@@ -15,7 +15,7 @@ public class LineNumberTest extends JvstTestRoot {
     m.insertBefore("{ if (1==1) { String a = null; } }");
     cc.writeFile();
     Object obj = make(cc.getName());
-    assetFirstLineNumber(obj, 5, "run");
+    assertFirstLineNumber(obj, 5, "run");
   }
 
   public void testInsertAfter() throws Exception {
@@ -24,7 +24,7 @@ public class LineNumberTest extends JvstTestRoot {
     m.insertAfter("{ if (1==1) { throw new RuntimeException(\"Expected\"); } }");
     cc.writeFile();
     Object obj = make(cc.getName());
-    assetFirstLineNumber(obj, 40002, "run");
+    assertFirstLineNumber(obj, 40002, "run");
   }
 
   public void testInsertBefore() throws Exception {
@@ -33,7 +33,7 @@ public class LineNumberTest extends JvstTestRoot {
     m.insertBefore("{ if (1==1) { throw new RuntimeException(\"Expected\"); } }");
     cc.writeFile();
     Object obj = make(cc.getName());
-    assetFirstLineNumber(obj, 40002, "run");
+    assertFirstLineNumber(obj, 40002, "run");
   }
 
   public void testAddTwoMethods() throws Exception {
@@ -52,8 +52,8 @@ public class LineNumberTest extends JvstTestRoot {
     cc.addMethod(m2);
     cc.writeFile();
     Object obj = make(cc.getName());
-    assetFirstLineNumber(obj, 40002, "run1");
-    assetFirstLineNumber(obj, 40002, "run2");
+    assertFirstLineNumber(obj, 40002, "run1");
+    assertFirstLineNumber(obj, 40002, "run2");
   }
 
   public void testAddMethod() throws Exception {
@@ -68,10 +68,10 @@ public class LineNumberTest extends JvstTestRoot {
     cc.addMethod(m);
     cc.writeFile();
     Object obj = make(cc.getName());
-    assetFirstLineNumber(obj, 40003, "run");
+    assertFirstLineNumber(obj, 40003, "run");
   }
 
-  private void assetFirstLineNumber(Object obj, int lineNumber, String methodName, Object... args) throws Exception {
+  private void assertFirstLineNumber(Object obj, int lineNumber, String methodName, Object... args) throws Exception {
     try {
       invoke(obj, methodName, args);
       fail("Exception thrown expected!");
