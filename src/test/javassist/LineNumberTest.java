@@ -10,7 +10,7 @@ public class LineNumberTest extends JvstTestRoot {
   }
 
   public void testAddTwoMethods() throws Exception {
-    CtClass cc = sloader.makeClass("test1.Loop");
+    CtClass cc = sloader.makeClass("generated.testAddTwoMethods");
     CtMethod m1 = CtNewMethod.make(
         "public void run1() { " +
             "String a = null; " +
@@ -32,7 +32,7 @@ public class LineNumberTest extends JvstTestRoot {
   }
 
   public void testAddMethod() throws Exception {
-    CtClass cc = sloader.makeClass("test1.Loop");
+    CtClass cc = sloader.makeClass("generated.testAddMethod");
     CtMethod m = CtNewMethod.make(
         "public void run() { " +
             "String a = null; " +
