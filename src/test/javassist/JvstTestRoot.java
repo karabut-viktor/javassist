@@ -1,7 +1,8 @@
 package javassist;
 
-import junit.framework.*;
 import java.lang.reflect.Method;
+
+import junit.framework.TestCase;
 
 public class JvstTestRoot extends TestCase {
     // the directory where all compiled class files are found.
@@ -49,5 +50,12 @@ public class JvstTestRoot extends TestCase {
             target.getClass().getMethod(method, new Class[] { int.class });
         Object res = m.invoke(target, new Object[] { new Integer(arg)});
         return ((Integer) res).intValue();
+    }
+
+    protected <T> T invoke(Object target, String method, Object... args)
+        throws Exception {
+        Method m = target.getClass().getDeclaredMethod(method);
+        Object res = m.invoke(target, args);
+        return (T) res;
     }
 }
