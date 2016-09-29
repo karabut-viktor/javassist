@@ -12,23 +12,27 @@ public class LineNumberTest extends JvstTestRoot {
   public void testAddMethod() throws Exception {
     CtClass cc = sloader.makeClass("test1.Loop");
     CtMethod m = CtNewMethod.make(
-        "public int run(int i) { " +
-            "int k = 0;" +
+        "public void run() { " +
             "String a = null; " +
-            "k = 3;" +
+            "int k = 2;" +
             "a.toString();" +
-            "while (true) { if (k++ > 10) return i; } }",
+            "k = 3;" +
+            "}",
         cc);
     cc.addMethod(m);
     cc.writeFile();
     Object obj = make(cc.getName());
+    assetFirstLineNumber(obj, 40003);
+  }
+
+  private void assetFirstLineNumber(Object obj, int lineNumber) throws Exception {
     try {
-      invoke(obj, "run", 3);
+      invoke(obj, "run");
+      fail("Exception thrown expected!");
     }
     catch (InvocationTargetException ite) {
       StackTraceElement[] stackTrace = ite.getCause().getStackTrace();
-      ite.getCause().printStackTrace();
-      assertEquals(50004, stackTrace[0].getLineNumber());
+      assertEquals(lineNumber, stackTrace[0].getLineNumber());
     }
   }
 }

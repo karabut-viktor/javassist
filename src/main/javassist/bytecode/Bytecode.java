@@ -119,6 +119,7 @@ public class Bytecode extends ByteVector implements Cloneable, Opcode {
      * constant pool table given to this <code>Bytecode</code> object.
      */
     public static final CtClass THIS = ConstPool.THIS;
+    private final LineNumberHelper newLineNumber;
 
     ConstPool constPool;
     int maxStack, maxLocals;
@@ -139,6 +140,7 @@ public class Bytecode extends ByteVector implements Cloneable, Opcode {
      * @param localvars         <code>max_locals</code>.
      */
     public Bytecode(ConstPool cp, int stacksize, int localvars) {
+        newLineNumber = new LineNumberHelper();
         constPool = cp;
         maxStack = stacksize;
         maxLocals = localvars;
@@ -189,8 +191,12 @@ public class Bytecode extends ByteVector implements Cloneable, Opcode {
      * Converts to a <code>CodeAttribute</code>.
      */
     public CodeAttribute toCodeAttribute() {
-        return new CodeAttribute(constPool, maxStack, maxLocals,
-                                 get(), tryblocks);
+        CodeAttribute ca = new CodeAttribute(constPool, maxStack, maxLocals, get(), tryblocks);
+        if (newLineNumber.getCount() > 0) {
+            ca.getAttributes().add(new LineNumberAttribute(constPool, newLineNumber.getTable()));
+        }
+
+        return ca;
     }
 
     /**
@@ -1487,5 +1493,9 @@ public class Bytecode extends ByteVector implements Cloneable, Opcode {
         addLdc(message);
         addInvokevirtual("java.io.PrintStream",
                          "println", "(Ljava/lang/String;)V");
+    }
+
+    public void atLineNumber() {
+        newLineNumber.registerLine(getSize());
     }
 }
