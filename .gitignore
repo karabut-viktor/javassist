@@ -5,6 +5,9 @@ runtest/
 html/
 lib/
 
+.idea
+javaassist.iml
+/test*
 .DS_Store
 .classpath
 .project
