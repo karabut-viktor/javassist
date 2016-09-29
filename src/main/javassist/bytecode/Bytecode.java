@@ -1498,4 +1498,8 @@ public class Bytecode extends ByteVector implements Cloneable, Opcode {
     public void atLineNumber() {
         newLineNumber.registerLine(getSize());
     }
+
+    public LineNumberAttribute mergeLineAttribute(LineNumberAttribute old) {
+        return new LineNumberAttribute(constPool, newLineNumber.getTable());
+    }
 }

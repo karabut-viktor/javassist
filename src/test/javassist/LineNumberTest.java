@@ -9,6 +9,24 @@ public class LineNumberTest extends JvstTestRoot {
     super(name);
   }
 
+  public void testPreserveOriginalLineNumbers() throws Exception {
+    CtClass cc = sloader.get("linenumbers.TestPreserveOriginalLineNumbers");
+    CtMethod m = cc.getDeclaredMethod("run");
+    m.insertBefore("{ if (1==1) { String a = null; } }");
+    cc.writeFile();
+    Object obj = make(cc.getName());
+    assetFirstLineNumber(obj, 5, "run");
+  }
+
+  public void testInsertBefore() throws Exception {
+    CtClass cc = sloader.get("linenumbers.TestInsertBefore");
+    CtMethod m = cc.getDeclaredMethod("run");
+    m.insertBefore("{ if (1==1) { throw new RuntimeException(\"Expected\"); } }");
+    cc.writeFile();
+    Object obj = make(cc.getName());
+    assetFirstLineNumber(obj, 40002, "run");
+  }
+
   public void testAddTwoMethods() throws Exception {
     CtClass cc = sloader.makeClass("generated.testAddTwoMethods");
     CtMethod m1 = CtNewMethod.make(

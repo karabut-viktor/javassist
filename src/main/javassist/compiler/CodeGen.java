@@ -325,7 +325,7 @@ public abstract class CodeGen extends Visitor implements Opcode, TokenId {
         if (st == null)
             return;     // empty
 
-        if (st.getOperator() == Stmnt.EXPR || st.getOperator() == Stmnt.DECL) {
+        if (isOnNewLine(st)) {
             bytecode.atLineNumber();
         }
 
@@ -380,6 +380,11 @@ public abstract class CodeGen extends Visitor implements Opcode, TokenId {
             throw new CompileError(
                 "sorry, not supported statement: TokenId " + op);
         }
+    }
+
+    private boolean isOnNewLine(Stmnt st) {
+        int op = st.getOperator();
+        return op == Stmnt.EXPR || op == Stmnt.DECL || op == Stmnt.IF || op == Stmnt.THROW;
     }
 
     private void atIfStmnt(Stmnt st) throws CompileError {

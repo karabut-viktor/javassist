@@ -764,6 +764,10 @@ public abstract class CtBehavior extends CtMember {
 
             int pos = iterator.insertEx(b.get());
             iterator.insert(b.getExceptionTable(), pos);
+
+
+            ca.getAttributes().add(b.mergeLineAttribute(null));
+
             if (rebuild)
                 methodInfo.rebuildStackMapIf6(cc.getClassPool(), cc.getClassFile2());
         }
