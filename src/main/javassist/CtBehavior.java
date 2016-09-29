@@ -872,6 +872,7 @@ public abstract class CtBehavior extends CtMember {
 
             ca.setMaxStack(b.getMaxStack());
             ca.setMaxLocals(b.getMaxLocals());
+            ca.getAttributes().add(b.mergeLineAttribute(null));
             methodInfo.rebuildStackMapIf6(cc.getClassPool(), cc.getClassFile2());
         }
         catch (NotFoundException e) {

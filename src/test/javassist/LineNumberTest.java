@@ -18,6 +18,15 @@ public class LineNumberTest extends JvstTestRoot {
     assetFirstLineNumber(obj, 5, "run");
   }
 
+  public void testInsertAfter() throws Exception {
+    CtClass cc = sloader.get("linenumbers.TestInsertAfter");
+    CtMethod m = cc.getDeclaredMethod("run");
+    m.insertAfter("{ if (1==1) { throw new RuntimeException(\"Expected\"); } }");
+    cc.writeFile();
+    Object obj = make(cc.getName());
+    assetFirstLineNumber(obj, 40002, "run");
+  }
+
   public void testInsertBefore() throws Exception {
     CtClass cc = sloader.get("linenumbers.TestInsertBefore");
     CtMethod m = cc.getDeclaredMethod("run");
