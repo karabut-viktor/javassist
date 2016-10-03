@@ -119,7 +119,7 @@ public class Bytecode extends ByteVector implements Cloneable, Opcode {
      * constant pool table given to this <code>Bytecode</code> object.
      */
     public static final CtClass THIS = ConstPool.THIS;
-    private final LineNumberHelper newLineNumber;
+    private final LineNumberRegistry lineNumberRegistry;
 
     ConstPool constPool;
     int maxStack, maxLocals;
@@ -140,7 +140,7 @@ public class Bytecode extends ByteVector implements Cloneable, Opcode {
      * @param localvars         <code>max_locals</code>.
      */
     public Bytecode(ConstPool cp, int stacksize, int localvars) {
-        newLineNumber = new LineNumberHelper();
+        lineNumberRegistry = new LineNumberRegistry();
         constPool = cp;
         maxStack = stacksize;
         maxLocals = localvars;
@@ -192,8 +192,8 @@ public class Bytecode extends ByteVector implements Cloneable, Opcode {
      */
     public CodeAttribute toCodeAttribute() {
         CodeAttribute ca = new CodeAttribute(constPool, maxStack, maxLocals, get(), tryblocks);
-        if (newLineNumber.getCount() > 0) {
-            ca.getAttributes().add(new LineNumberAttribute(constPool, newLineNumber.getTable()));
+        if (lineNumberRegistry.getCount() > 0) {
+            ca.getAttributes().add(new LineNumberAttribute(constPool, lineNumberRegistry.getTable()));
         }
 
         return ca;
@@ -1496,10 +1496,10 @@ public class Bytecode extends ByteVector implements Cloneable, Opcode {
     }
 
     public void atLineNumber() {
-        newLineNumber.registerLine(getSize());
+        lineNumberRegistry.registerLine(getSize());
     }
 
     public LineNumberAttribute mergeLineAttribute(LineNumberAttribute old) {
-        return new LineNumberAttribute(constPool, newLineNumber.getTable());
+        return new LineNumberAttribute(constPool, lineNumberRegistry.getTable());
     }
 }

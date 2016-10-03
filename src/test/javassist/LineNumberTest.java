@@ -77,6 +77,7 @@ public class LineNumberTest extends JvstTestRoot {
       fail("Exception thrown expected!");
     }
     catch (InvocationTargetException ite) {
+      ite.getCause().printStackTrace();;
       StackTraceElement[] stackTrace = ite.getCause().getStackTrace();
       assertEquals(lineNumber, stackTrace[0].getLineNumber());
     }

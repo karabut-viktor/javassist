@@ -384,7 +384,21 @@ public abstract class CodeGen extends Visitor implements Opcode, TokenId {
 
     private boolean isOnNewLine(Stmnt st) {
         int op = st.getOperator();
-        return op == Stmnt.EXPR || op == Stmnt.DECL || op == Stmnt.IF || op == Stmnt.THROW;
+        return op == Stmnt.EXPR
+            || op == Stmnt.DECL
+            || op == Stmnt.FOR
+            || op == Stmnt.WHILE
+            || op == Stmnt.CASE
+            || op == Stmnt.SWITCH
+            || op == Stmnt.TRY
+            || op == Stmnt.CATCH
+            || op == Stmnt.FINALLY
+            || op == Stmnt.BREAK
+            || op == Stmnt.RETURN
+            || op == Stmnt.CONTINUE
+            || op == Stmnt.IF
+            || op == Stmnt.ELSE
+            || op == Stmnt.THROW;
     }
 
     private void atIfStmnt(Stmnt st) throws CompileError {

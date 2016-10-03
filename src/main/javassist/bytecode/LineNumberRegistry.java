@@ -4,16 +4,16 @@ import java.util.Map;
 import java.util.SortedMap;
 import java.util.TreeMap;
 
-public class LineNumberHelper {
+public class LineNumberRegistry {
   private final static int FIRST_LINE = 40000;
 
   private int nextLine = FIRST_LINE;
   private SortedMap<Integer, Integer> linesMap = new TreeMap<>();
 
   public void registerLine(int bytecodeIndex) {
-    if (linesMap.containsKey(bytecodeIndex)) {
-      throw new IllegalStateException("Trying to declare second line number to same bytecode operator");
-    }
+//    if (linesMap.containsKey(bytecodeIndex)) {
+//      throw new IllegalStateException("Trying to declare second line number to same bytecode operator");
+//    }
 
     linesMap.put(bytecodeIndex, ++nextLine);
   }
