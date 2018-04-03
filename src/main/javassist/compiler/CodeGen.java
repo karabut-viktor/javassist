@@ -18,9 +18,8 @@ package javassist.compiler;
 
 import java.util.ArrayList;
 import java.util.Arrays;
-
-import javassist.bytecode.*;
 import javassist.compiler.ast.*;
+import javassist.bytecode.*;
 
 /* The code generator is implemeted by three files:
  * CodeGen.java, MemberCodeGen.java, and JvstCodeGen.
@@ -325,9 +324,7 @@ public abstract class CodeGen extends Visitor implements Opcode, TokenId {
         if (st == null)
             return;     // empty
 
-        if (isOnNewLine(st)) {
-            bytecode.atLineNumber();
-        }
+        bytecode.getLineNumberHelper().addNewLineNumberIfShouldBeNewLine(st);
 
         int op = st.getOperator();
         if (op == EXPR) {

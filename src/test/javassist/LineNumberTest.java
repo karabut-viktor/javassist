@@ -39,15 +39,17 @@ public class LineNumberTest extends JvstTestRoot {
   public void testAddTwoMethods() throws Exception {
     CtClass cc = sloader.makeClass("generated.testAddTwoMethods");
     CtMethod m1 = CtNewMethod.make(""+
-        "public void run1() { " +
+        "public int run1() { " +
         "  String a = null; " +
         "  a.toString();" +
+        "  return 0;" +
         "}", cc);
     cc.addMethod(m1);
     CtMethod m2 = CtNewMethod.make("" +
-        "public void run2() { " +
+        "public int run2() { " +
         "  String a = null; " +
         "  a.toString();" +
+        "  return 0;" +
         "}", cc);
     cc.addMethod(m2);
     cc.writeFile();
@@ -59,11 +61,12 @@ public class LineNumberTest extends JvstTestRoot {
   public void testAddMethod() throws Exception {
     CtClass cc = sloader.makeClass("generated.testAddMethod");
     CtMethod m = CtNewMethod.make("" +
-        "public void run() { " +
+        "public int run() { " +
         "  String a = null; " +
         "  int k = 2;" +
         "  a.toString();" +
         "  k = 3;" +
+        "  return 0;" +
         "}", cc);
     cc.addMethod(m);
     cc.writeFile();
@@ -71,13 +74,13 @@ public class LineNumberTest extends JvstTestRoot {
     assertFirstLineNumber(obj, 40003, "run");
   }
 
-  private void assertFirstLineNumber(Object obj, int lineNumber, String methodName, Object... args) throws Exception {
+  private void assertFirstLineNumber(Object obj, int lineNumber, String methodName) throws Exception {
     try {
-      invoke(obj, methodName, args);
+      invoke(obj, methodName);
       fail("Exception thrown expected!");
     }
     catch (InvocationTargetException ite) {
-      ite.getCause().printStackTrace();;
+      ite.getCause().printStackTrace();
       StackTraceElement[] stackTrace = ite.getCause().getStackTrace();
       assertEquals(lineNumber, stackTrace[0].getLineNumber());
     }

@@ -1,7 +1,8 @@
 package linenumbers;
 
 public class TestInsertBefore {
-  public void run() {
+  public int run() {
     int a = 123;
+    return 0;
   }
 }

@@ -140,12 +140,12 @@ public class Bytecode extends ByteVector implements Cloneable, Opcode {
      * @param localvars         <code>max_locals</code>.
      */
     public Bytecode(ConstPool cp, int stacksize, int localvars) {
-        lineNumberRegistry = new LineNumberRegistry();
         constPool = cp;
         maxStack = stacksize;
         maxLocals = localvars;
         tryblocks = new ExceptionTable(cp);
         stackDepth = 0;
+        lineNumberRegistry = new LineNumberRegistry(this);
     }
 
     /**
@@ -192,10 +192,7 @@ public class Bytecode extends ByteVector implements Cloneable, Opcode {
      */
     public CodeAttribute toCodeAttribute() {
         CodeAttribute ca = new CodeAttribute(constPool, maxStack, maxLocals, get(), tryblocks);
-        if (lineNumberRegistry.getCount() > 0) {
-            ca.getAttributes().add(new LineNumberAttribute(constPool, lineNumberRegistry.getTable()));
-        }
-
+        lineNumberRegistry.addNewLinesIfAny(ca);
         return ca;
     }
 
@@ -1495,11 +1492,7 @@ public class Bytecode extends ByteVector implements Cloneable, Opcode {
                          "println", "(Ljava/lang/String;)V");
     }
 
-    public void atLineNumber() {
-        lineNumberRegistry.registerLine(getSize());
-    }
-
-    public LineNumberAttribute mergeLineAttribute(LineNumberAttribute old) {
-        return new LineNumberAttribute(constPool, lineNumberRegistry.getTable());
+    public LineNumberRegistry getLineNumberRegistry() {
+      return lineNumberRegistry;
     }
 }

@@ -115,7 +115,7 @@ public class CompTest extends TestCase {
 
     public static void main(String[] args) {
         // junit.textui.TestRunner.run(suite());
-        junit.awtui.TestRunner.main(new String[] {
+        junit.textui.TestRunner.main(new String[] {
             "javassist.compiler.CompTest" });
     }
 
