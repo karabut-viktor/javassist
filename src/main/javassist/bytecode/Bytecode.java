@@ -192,7 +192,7 @@ public class Bytecode extends ByteVector implements Cloneable, Opcode {
      */
     public CodeAttribute toCodeAttribute() {
         CodeAttribute ca = new CodeAttribute(constPool, maxStack, maxLocals, get(), tryblocks);
-        lineNumberRegistry.addNewLinesIfAny(ca);
+        lineNumberRegistry.addNewLinesIfAny(ca, 0);
         return ca;
     }
 

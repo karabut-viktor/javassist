@@ -764,9 +764,7 @@ public abstract class CtBehavior extends CtMember {
 
             int pos = iterator.insertEx(b.get());
             iterator.insert(b.getExceptionTable(), pos);
-
-            b.getLineNumberHelper().addNewLinesIfAny(ca);
-
+            b.getLineNumberRegistry().addNewLinesIfAny(ca, 0);
             if (rebuild)
                 methodInfo.rebuildStackMapIf6(cc.getClassPool(), cc.getClassFile2());
         }
@@ -871,7 +869,7 @@ public abstract class CtBehavior extends CtMember {
 
             ca.setMaxStack(b.getMaxStack());
             ca.setMaxLocals(b.getMaxLocals());
-            b.getLineNumberHelper().addNewLinesIfAny(ca);
+            b.getLineNumberRegistry().addNewLinesIfAny(ca, advicePos);
             methodInfo.rebuildStackMapIf6(cc.getClassPool(), cc.getClassFile2());
         }
         catch (NotFoundException e) {

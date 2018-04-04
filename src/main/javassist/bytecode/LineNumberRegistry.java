@@ -6,28 +6,45 @@ import java.io.IOException;
 import java.util.Map;
 import java.util.SortedMap;
 import java.util.TreeMap;
+import java.util.WeakHashMap;
 
 import javassist.compiler.ast.Stmnt;
 
 public class LineNumberRegistry {
   private final static int FIRST_LINE = 40000;
+  private static Map<Object, Integer> blockNumber = new WeakHashMap<Object, Integer>();
 
   private final Bytecode bc;
   private int nextLine = FIRST_LINE;
-  private SortedMap<Integer, Integer> linesMap = new TreeMap<>();
+  private SortedMap<Integer, Integer> linesMap = new TreeMap<Integer, Integer>();
 
   public LineNumberRegistry(Bytecode bc) {
     this.bc = bc;
+    Integer i = blockNumber.get(bc.getConstPool());
+    if (i == null) {
+      i = Integer.valueOf(0);
+    }
+    else {
+      i++;
+      nextLine += i * 1000;
+    }
+    blockNumber.put(bc.getConstPool(), i);
   }
 
-  public void addNewLinesIfAny(CodeAttribute ca) {
+  public void addNewLinesIfAny(CodeAttribute ca, int startPos) {
     if (linesMap.size() > 0) {
-      try {
-        ca.getAttributes().add(new LineNumberAttribute(bc.getConstPool(), bc.getConstPool().addUtf8Info(LineNumberAttribute.tag),
-            new DataInputStream(new ByteArrayInputStream(getTable()))));
+      LineNumberAttribute oa = (LineNumberAttribute) ca.getAttribute(LineNumberAttribute.tag);
+      if (oa == null) {
+        try {
+          ca.getAttributes().add(new LineNumberAttribute(bc.getConstPool(), bc.getConstPool().addUtf8Info(LineNumberAttribute.tag),
+              new DataInputStream(new ByteArrayInputStream(getNewTable()))));
+        }
+        catch (IOException e) {
+          throw new RuntimeException(e); // should never reach here.
+        }
       }
-      catch (IOException e) {
-        throw new RuntimeException(e); // should never reach here.
+      else {
+        oa.info = getTable(oa, startPos);
       }
     }
   }
@@ -41,26 +58,38 @@ public class LineNumberRegistry {
     System.out.println((newLine ? '+' : '-') + " Line number for: " + st);
     if (newLine) {
       Integer bytecodeIndex = bc.getSize();
-      if (linesMap.containsKey(bytecodeIndex)) {
-        throw new IllegalStateException("Trying to declare second line number to same bytecode operator");
+      if (!linesMap.containsKey(bytecodeIndex)) {
+        linesMap.put(bytecodeIndex, ++nextLine);
       }
-      linesMap.put(bytecodeIndex, ++nextLine);
     }
   }
 
-  private byte[] getTable() {
+  private byte[] getTable(LineNumberAttribute oa, int startPos) {
+    byte[] lines = new byte[oa.info.length + 4 * linesMap.size()];
+    ByteArray.write16bit((lines.length - 2) / 4, lines, 0);
+    addData(lines, 0, startPos);
+    System.arraycopy(oa.info, 2, lines, lines.length - oa.info.length + 2, oa.info.length - 2);
+    return lines;
+  }
+
+  private byte[] getNewTable() {
     byte[] lines = new byte[4 + 2 + 4 * linesMap.size()];
     ByteArray.write32bit(lines.length - 4, lines, 0);// Table size for DataInputStream
-    ByteArray.write16bit(linesMap.size(), lines, 0 + 4);
+    ByteArray.write16bit(linesMap.size(), lines, 4);
+    addData(lines, 4, 0);
+    return lines;
+  }
+
+  private void addData(byte[] lines, int index, int startPos) {
     int i = 0;
     for (Map.Entry<Integer, Integer> e : linesMap.entrySet()) {
-      Integer codePoint = e.getKey();
+      Integer codePoint = e.getKey() + startPos;
       Integer lineNumber = e.getValue();
-      ByteArray.write16bit(codePoint, lines, i * 4 + 2 + 4);
-      ByteArray.write16bit(lineNumber, lines, i * 4 + 4 + 4);
+      System.out.println("debug n " + codePoint + " " + lineNumber);
+      ByteArray.write16bit(codePoint, lines, i * 4 + 2 + index);
+      ByteArray.write16bit(lineNumber, lines, i * 4 + 4 + index);
       i++;
     }
-    return lines;
   }
 
   private boolean isOnNewLine(Stmnt st) {
